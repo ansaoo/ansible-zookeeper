@@ -45,6 +45,7 @@
     enabled: yes
     name: zookeeper
     state: started
+    daemon_reload: yes
 
 - name: Wait for Zookeeper client port
   wait_for:
