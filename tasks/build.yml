@@ -9,6 +9,11 @@
       - wget
       - openjdk-8-jdk
 
+- name: Create a group zookeeper
+  group:
+    name: "{{ sansible_zookeeper_user }}"
+    state: present
+
 - name: Create an user zookeeper
   user:
     name: "{{ sansible_zookeeper_user }}"
