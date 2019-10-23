@@ -1,4 +1,20 @@
 ---
+- name: install wget openjdk
+  apt:
+    name: "{{ packages }}"
+    state: latest
+    update_cache: yes
+  vars:
+    packages:
+      - wget
+      - openjdk-8-jdk
+
+- name: Create an user zookeeper
+  user:
+    name: "{{ sansible_zookeeper_user }}"
+    group: "{{ sansible_zookeeper_group }}"
+    state: present
+    shell: /bin/bash
 
 - name: Create Zookeeper directories
   become: yes
@@ -8,33 +24,29 @@
     path: "{{ item }}"
     state: directory
   with_items:
-    - "/home/{{ sansible_zookeeper_user }}/bin"
+    - "{{ sansible_zookeeper_home_dir }}"
+    - "{{ sansible_zookeeper_home_dir }}/scripts"
+    - "{{ sansible_zookeeper_install_dir }}"
     - "{{ sansible_zookeeper_conf_dir }}"
     - "{{ sansible_zookeeper_data_dir }}"
     - "{{ sansible_zookeeper_log_dir }}"
 
-- name: Download ZooKeeper
-  become: yes
-  become_user: "{{ sansible_zookeeper_user }}"
-  get_url:
-    url: "{{ sansible_zookeeper_download_url }}"
-    dest: "/home/{{ sansible_zookeeper_user }}/zookeeper-{{ sansible_zookeeper_version }}.tar.gz"
-
-- name: Unpack Zookeeper
+- name: Download and Unpack Zookeeper
   become: yes
   become_user: "{{ sansible_zookeeper_user }}"
   unarchive:
-    copy: no
-    creates: "/home/{{ sansible_zookeeper_user }}/zookeeper-{{ sansible_zookeeper_version }}"
-    dest: "/home/{{ sansible_zookeeper_user }}"
-    src: "/home/{{ sansible_zookeeper_user }}/zookeeper-{{ sansible_zookeeper_version }}.tar.gz"
+    dest: "{{ sansible_zookeeper_home_dir }}"
+    src: "{{ sansible_zookeeper_download_url }}"
+    remote_src: true
+  args:
+    creates: "{{ sansible_zookeeper_home_dir }}/zookeeper-{{ sansible_zookeeper_version }}"
 
 - name: Link to Zookeeper Directory
   become: yes
   become_user: "{{ sansible_zookeeper_user }}"
   file:
     dest: "{{ sansible_zookeeper_install_dir }}"
-    src: "/home/{{ sansible_zookeeper_user }}/zookeeper-{{ sansible_zookeeper_version }}"
+    src: "{{ sansible_zookeeper_home_dir }}/zookeeper-{{ sansible_zookeeper_version }}"
     state: link
 
 - name: Create Zookeeper service
