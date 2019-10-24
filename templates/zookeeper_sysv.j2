@@ -20,9 +20,16 @@ set -e
 
 # Exit if the package is not installed
 # Test that libzookeeper-java is installed
-[ -r "{{ sansible_zookeeper_install_dir }}/zookeeper-{{ sansible_zookeeper_version }}.jar" ] || exit 0
+if [ ! -f "{{ sansible_zookeeper_install_dir }}/zookeeper/zookeeper-{{ sansible_zookeeper_version }}.jar" ]; then
+    echo "ERROR"
+    exit 1
+fi
 # Test that zookeeper is installed and not purged
-[ -r "{{ sansible_zookeeper_conf_dir }}/environment" ] || exit 0
+if [ ! -f "{{ sansible_zookeeper_conf_dir }}/environment" ];then
+    echo "ERROR"
+    exit 1
+fi
+
 . {{ sansible_zookeeper_conf_dir }}/environment
 
 # PATH should only include /usr/* if it runs after the mountnfs.sh script
@@ -31,7 +38,10 @@ DESC="centralized coordination service"
 SCRIPTNAME=/etc/init.d/$NAME
 
 # Read configuration variable file if it is present
-[ -r /etc/default/$NAME ] && . /etc/default/$NAME
+if [ -f /etc/default/$NAME ];then
+    echo "load default"
+    . /etc/default/$NAME
+fi
 
 # Load the VERBOSE setting and other rcS variables
 . /lib/init/vars.sh

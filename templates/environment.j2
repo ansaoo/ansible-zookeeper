@@ -2,7 +2,7 @@
 # Modified from http://packages.ubuntu.com/saucy/zookeeperd
 NAME=zookeeper
 ZOOCFGDIR={{ sansible_zookeeper_conf_dir }}
-ZOODIR={{ sansible_zookeeper_install_dir }}
+ZOODIR={{ sansible_zookeeper_install_dir }}/zookeeper
 
 CLASSPATH="$ZOOCFGDIR:$ZOODIR/zookeeper-{{ sansible_zookeeper_version }}.jar:{{ sansible_zookeeper_classpath | default('$ZOODIR/lib/*') }}"
 

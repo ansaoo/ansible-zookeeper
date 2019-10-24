@@ -6,9 +6,8 @@ sansible_zookeeper_data_dir: /var/zookeeper/data
 sansible_zookeeper_download_url: "http://archive.apache.org/dist/zookeeper/zookeeper-{{ sansible_zookeeper_version }}/zookeeper-{{ sansible_zookeeper_version }}.tar.gz"
 sansible_zookeeper_election_port: 3888
 sansible_zookeeper_group: zookeeper
-sansible_zookeeper_hosts:
-  - localhost
-sansible_zookeeper_id: 1
+sansible_zookeeper_hosts: "{{ groups['zookeeper-nodes'] }}"
+zookeeper_id: 1
 sansible_zookeeper_init_limit: 60
 sansible_zookeeper_install_dir: /opt/zookeeper
 sansible_zookeeper_java_opts: "-Xmx{{ (ansible_memtotal_mb / 2) | int }}m -Xms{{ (ansible_memtotal_mb / 2) | int }}m"
