@@ -1,10 +1,10 @@
 ---
-- name: Set Zookeeper Id
+- name: Zookeeper | Set Zookeeper Id
   set_fact: zookeeper_id={{item.0 + 1}}
   with_indexed_items: "{{ groups['zookeeper-nodes'] }}"
   when: item.1 == "{{inventory_hostname}}"
 
-- name: Setup Zookeeper environment config
+- name: Zookeeper | Setup Zookeeper environment config
   template:
     dest: "{{ sansible_zookeeper_conf_dir }}/environment"
     mode: 0644
@@ -12,14 +12,14 @@
   notify:
     - restart zookeeper
 
-- name: Setup myid
+- name: Zookeeper | Setup myid
   template:
     dest: "{{ sansible_zookeeper_data_dir }}/myid"
     src: myid.j2
   notify:
     - restart zookeeper
 
-- name: Setup zoo.cfg file
+- name: Zookeeper | Setup zoo.cfg file
   template:
     dest: "{{ sansible_zookeeper_conf_dir }}/zoo.cfg"
     mode: 0644
@@ -27,7 +27,7 @@
   notify:
     - restart zookeeper
 
-- name: Create Zookeeper log4j config
+- name: Zookeeper | Create log4j config
   template:
     dest: "{{ sansible_zookeeper_conf_dir }}/log4j.properties"
     mode: 0644
@@ -35,7 +35,7 @@
   notify:
     - restart zookeeper
 
-- name: Start Zookeeper service
+- name: Zookeeper | Start service
   become: yes
   service:
     enabled: yes
@@ -43,13 +43,13 @@
     state: started
     daemon_reload: yes
 
-- name: Wait for Zookeeper client port
+- name: Zookeeper | Wait for Zookeeper client port
   wait_for:
     port: "{{ sansible_zookeeper_client_port }}"
     state: started
     timeout: 60
 
-- name: Copy zookeeper check script
+- name: Zookeeper | Copy zookeeper check script
   copy:
     src: zookeeper_check
     dest: "{{ sansible_zookeeper_home_dir }}/scripts/zookeeper_check"
@@ -57,7 +57,7 @@
     group: "{{ sansible_zookeeper_group }}"
     mode: 0750
 
-- name: Change directories owner
+- name: Zookeeper | Change directories owner
   file:
     path: "{{ sansible_zookeeper_home_dir }}"
     group: "{{ sansible_zookeeper_group }}"

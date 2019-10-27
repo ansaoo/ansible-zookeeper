@@ -1,5 +1,5 @@
 ---
-- name: install wget openjdk
+- name: Zookeeper |  install wget openjdk
   apt:
     name: "{{ packages }}"
     state: latest
@@ -10,19 +10,19 @@
       - openjdk-8-jdk
       - apt-transport-https
 
-- name: Create a group zookeeper
+- name: Zookeeper |  Create a group zookeeper
   group:
     name: "{{ sansible_zookeeper_user }}"
     state: present
 
-- name: Create an user zookeeper
+- name: Zookeeper |  Create an user zookeeper
   user:
     name: "{{ sansible_zookeeper_user }}"
     group: "{{ sansible_zookeeper_group }}"
     state: present
     shell: /bin/bash
 
-- name: Create Zookeeper directories
+- name: Zookeeper | Create directories
   file:
     group: "{{ sansible_zookeeper_group }}"
     owner: "{{ sansible_zookeeper_user }}"
@@ -36,32 +36,32 @@
     - "{{ sansible_zookeeper_data_dir }}"
     - "{{ sansible_zookeeper_log_dir }}"
 
-- name: Download ZooKeeper
+- name: Zookeeper | Download
   get_url:
     url: "{{ sansible_zookeeper_download_url }}"
     dest: "{{ sansible_zookeeper_home_dir }}/zookeeper-{{ sansible_zookeeper_version }}.tar.gz"
 
-- name: Unpack Zookeeper
+- name: Zookeeper | Unpack
   unarchive:
     copy: no
     creates: "{{ sansible_zookeeper_home_dir }}/zookeeper-{{ sansible_zookeeper_version }}"
     dest: "{{ sansible_zookeeper_home_dir }}"
     src: "{{ sansible_zookeeper_home_dir }}/zookeeper-{{ sansible_zookeeper_version }}.tar.gz"
 
-- name: Change directories owner
+- name: Zookeeper | Change directories owner
   file:
     path: "{{ sansible_zookeeper_home_dir }}"
     group: "{{ sansible_zookeeper_group }}"
     owner: "{{ sansible_zookeeper_user }}"
     recurse: yes
 
-- name: Link to Zookeeper Directory
+- name: Zookeeper | Link to Directory
   file:
     dest: "{{ sansible_zookeeper_install_dir }}/zookeeper"
     src: "{{ sansible_zookeeper_home_dir }}/zookeeper-{{ sansible_zookeeper_version }}"
     state: link
 
-- name: Create Zookeeper service
+- name: Zookeeper | Create service
   become: yes
   template:
     dest: /etc/init.d/zookeeper
@@ -69,7 +69,7 @@
     owner: root
     src: zookeeper_sysv.j2
 
-- name: Create zookeeper startup links
+- name: Zookeeper | Create startup links
   become: yes
   command: update-rc.d zookeeper defaults
   args:
